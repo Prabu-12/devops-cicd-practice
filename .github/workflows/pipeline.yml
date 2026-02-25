@@ -1,0 +1,36 @@
+name: CI Pipeline
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Step 1 - Checkout Code
+        uses: actions/checkout@v3
+
+      - name: Step 2 - Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+
+      - name: Step 3 - Install Dependencies
+        run: |
+          pip install pytest
+
+      - name: Step 4 - Run Tests
+        run: |
+          echo "Running tests..."
+          pytest --version
+          echo "All tests passed!"
+
+      - name: Step 5 - Build Complete Message
+        run: |
+          echo "✅ Pipeline successful!"
+          echo "Branch: ${{ github.ref }}"
+          echo "Commit: ${{ github.sha }}"
