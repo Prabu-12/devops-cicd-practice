@@ -16,26 +16,22 @@ pipeline {
             }
         }
 
-        stage('Build') {               // Stage 2 — Build the app
-            steps {
-                echo "Building ${APP_NAME} v${VERSION}..."
-                sh '''
-                    echo "Running build commands..."
-                    echo "Build complete!"
-                '''
-            }
-        }
+       stage('Build Docker Image') {
+    steps {
+        echo "Building Docker image..."
+        sh "docker build -t ${APP_NAME}:${env.BUILD_NUMBER} ."
+        sh "docker build -t ${APP_NAME}:latest ."
+        echo "Docker image built: ${APP_NAME}:${env.BUILD_NUMBER}"
+    }
+}
 
-        stage('Test') {                // Stage 3 — Run tests
-            steps {
-                echo "Running tests..."
-                sh '''
-                    echo "Unit tests: PASSED"
-                    echo "Integration tests: PASSED"
-                    echo "All tests passed!"
-                '''
-            }
-        }
+stage('Test Docker Image') {
+    steps {
+        echo "Testing Docker image..."
+        sh "docker run --rm ${APP_NAME}:latest"
+        echo "Docker image test passed!"
+    }
+}
 
         stage('Code Quality') {        // Stage 4 — Quality check
             steps {
